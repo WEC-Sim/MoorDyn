@@ -1,4 +1,4 @@
-To use WEC-Sim in MoorDyn, please place all the files and folders under
+To use MoorDyn in WEC-Sim, please place all the files and folders under
 **WEC-Sim/source/functions/moorDyn**
 
 
