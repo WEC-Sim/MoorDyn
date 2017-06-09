@@ -1,5 +1,7 @@
-To use MoorDyn in WEC-Sim, please place all the files and folders under
-**WEC-Sim/source/functions/moorDyn**
+To use MoorDyn in WEC-Sim, please
+
+1. Download moorDyn from repo <https://github.com/WEC-Sim/moorDyn> 
+2. Place all the files and folders under **WEC-Sim/source/functions/moorDyn** folder
 
 
 --------------------- MoorDyn v1.00.04C -------------------------
