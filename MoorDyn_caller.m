@@ -4,7 +4,6 @@ function FLines = MoorDyn_caller(X,XD,Time,CoupTime)
     FLines_value = zeros(1,6);
     FLines = zeros(1,6);
     FLines_p = libpointer('doublePtr',FLines_value);
-    calllib('Lines','LinesCalc',X,XD,FLines_p,Time,CoupTime);
+    calllib('libmoordyn', 'MoorDynStep', X, XD, FLines_p, Time, CoupTime);
     FLines = FLines_p.value;
-end
-
+end 
