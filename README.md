@@ -33,6 +33,8 @@ General Public License for details.
 You should have received a copy of the GNU General Public License 
 along with MoorDyn.  If not, see <http://www.gnu.org/licenses/>.
 
+If the MoorDyn files on this repository are not functioning on your system, you should compile the code from source following the steps in the [documentation](https://moordyn.readthedocs.io/en/latest/). MoorDyn will automatically build with the right architecture for your system. Once you have your local MoorDyn library and source code, replace `MoorDyn.h`, `MoorDynAPI.h`, and the library file (e.g., `libmoordyn.dll`) from this repo with your local copy.
+
 ---------------------- More Information -------------------------
 
 More information about MoorDyn is now available at [moordyn.readthedocs.io](https://moordyn.readthedocs.io/en/latest/) -- including the User's Guide, source code, and examples.  
