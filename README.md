@@ -46,7 +46,8 @@ data,î Ocean Engineering, vol. 104, pp. 590ñ603, Aug. 2015.
 <http://www.sciencedirect.com/science/article/pii/S0029801815002279>
 
 ---------------------- Troubleshooting -------------------------
-Mac architecture issue:
+
+**Mac architecture issue:**
 
 If WECSim on Mac gives architecture errors when running MoorDyn similar to:
 
