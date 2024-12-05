@@ -142,9 +142,11 @@ extern "C"
 	int DECLDIR GetPointForce(int l, double force[3]);
 	int DECLDIR GetNodePos(int LineNum, int NodeNum, double pos[3]);
 
-	int DECLDIR DrawWithGL(void);
-
-	int AllOutput(double, double);
+	// AllOutput has been commented out to reduce warnings, 
+	// it is now automatically called in V2 by MoorDynStep.
+	// NOTE: THIS IS NOT REMOVED IN MAIN THE MD-C V1 API WRAPPER.
+	// MD-C 2.8.3 will resolve this issue more properly. 
+	// int AllOutput(double, double);
 
 	/**
 	 * @}
