@@ -1,0 +1,20 @@
+name: Compile MoorDyn Libraries
+on:
+  repository_dispatch:
+    types:
+      - MoorDyn-master
+jobs:
+  pull-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release asset
+        uses: dsaltares/fetch-gh-release-asset@v1.1.2
+        with:
+          repo: 'FloatingArrayDesign/MoorDyn'
+          file: 'Moordyn-2.3.8-win64.exe'
+          token: ${{ secrets.DEPLOY_TOKEN }}
+  run-exe:
+    runs-on: windows-latest
+    steps:
+      - name: Run windows executable
+        run: Moordyn-2.3.8-win64.exe
