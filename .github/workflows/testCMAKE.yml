@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
-            os: [ubuntu-22.04]
+            os: [ubuntu-22.04, windows-latest, macOS-latest]
 
     steps:
     - uses: actions/checkout@v4
@@ -120,7 +120,7 @@ jobs:
       if: runner.os == 'Windows'
 
     # Step 4: Upload the generated files
-    - name: Upload generated files
+    - name: Upload generated files - Linux
       uses: actions/upload-artifact@v4
       with:
         name: generated-libraries
@@ -128,3 +128,24 @@ jobs:
           ${{github.workspace}}/install/lib/libmoordyn.so
           ${{github.workspace}}/install/lib/libmoordyn.so.2
           ${{github.workspace}}/install/lib/libmoordyn.so.2.3
+        if: runner.os == 'Linux'
+
+    - name: Upload generated files - MacOS
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-libraries
+        path: |
+          ${{github.workspace}}/install/lib/libmoordyn.so
+          ${{github.workspace}}/install/lib/libmoordyn.so.2
+          ${{github.workspace}}/install/lib/libmoordyn.so.2.3
+        if: runner.os == 'MacOS'
+
+    - name: Upload generated files - Windows
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-libraries
+        path: |
+          ${{github.workspace}}/install/lib/libmoordyn.so
+          ${{github.workspace}}/install/lib/libmoordyn.so.2
+          ${{github.workspace}}/install/lib/libmoordyn.so.2.3
+        if: runner.os == 'Windows'
