@@ -1,0 +1,130 @@
+name: CMake
+
+on:
+  workflow_dispatch:
+    inputs:
+      os:
+        description: 'Host OS'
+        required: false
+        type: string
+        default: '["ubuntu-22.04"]'
+  pull_request:      # Triggers the workflow on pull request events
+
+permissions: write-all
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+  VTK_VERSION_MAJOR: 9
+  VTK_VERSION_MINOR: 3
+  VTK_VERSION_PATCH: 1
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: [ubuntu-22.04]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+       repository: 'FloatingArrayDesign/MoorDyn'
+
+    - name: moordyn_version
+      id: moordyn_version
+      shell: bash
+      run: |
+        major=`cat CMakeLists.txt | grep MOORDYN_MAJOR_VERSION | head -1 | awk -F' ' '{print $2}' | awk -F')' '{print $1}'`
+        minor=`cat CMakeLists.txt | grep MOORDYN_MINOR_VERSION | head -1 | awk -F' ' '{print $2}' | awk -F')' '{print $1}'`
+        patch=`cat CMakeLists.txt | grep MOORDYN_PATCH_VERSION | head -1 | awk -F' ' '{print $2}' | awk -F')' '{print $1}'`
+        echo "moordyn_version=$major.$minor.$patch" >> $GITHUB_OUTPUT
+
+    - name: Setup GCC Fortran (Linux)
+      uses: awvwgk/setup-fortran@main
+      id: setup-fortran
+      with:
+        compiler: gcc
+      if: runner.os == 'Linux'
+
+    - name: Create install folder
+      run: |
+          mkdir -p ${{github.workspace}}/install
+
+    - name: Configure CMake (Linux)
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=ON -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
+      if: runner.os == 'Linux'
+
+    - name: Configure CMake (MacOS)
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
+      if: runner.os == 'MacOS'
+
+    - name: Configure CMake (Windows)
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
+      if: runner.os == 'Windows'
+
+    - name: Build
+      id: build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    # We do a little hack here. We install the library so we perfectly know the
+    # path. Then we set the environment variable to let the OS find the
+    # libraries
+
+    - name: Install
+      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Set $PATH (Windows)
+      run: Add-Content $env:GITHUB_PATH "${{github.workspace}}\install\bin"
+      if: runner.os == 'Windows'
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      # We are just testing in Linux
+      run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+
+    - name: Create Installer
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      # Package the installer
+      run: cpack -C ${{env.BUILD_TYPE}}
+
+    - name: Test - list build folder
+      working-directory: ${{github.workspace}}/build
+      run: 
+        ls
+        
+    - name: Test - list install folder
+      working-directory: ${{github.workspace}}/install
+      run: 
+        ls
+
+    - name: Test - list install/lib folder-linux
+      working-directory: ${{github.workspace}}/install/lib
+      # We are just testing in Linux
+      run: 
+        ls
+      if: runner.os == 'Linux'
+
+    - name: Test - list install/lib folder-mac
+      working-directory: ${{github.workspace}}/install/lib
+      # We are just testing in Linux
+      run: 
+        ls
+      if: runner.os == 'MacOS'
+
+    - name: Test - list install/bin folder
+      working-directory: ${{github.workspace}}/install/bin
+      run: 
+        ls
+      if: runner.os == 'Windows'
+
+    # Step 4: Upload the generated files
+    - name: Upload generated files
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-libraries
+        path: |
+          ${{github.workspace}}/install/lib/libmoordyn.so
+          ${{github.workspace}}/install/lib/libmoordyn.so.2
+          ${{github.workspace}}/install/lib/libmoordyn.so.2.3
