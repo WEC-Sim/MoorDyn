@@ -15,16 +15,13 @@ permissions: write-all
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  VTK_VERSION_MAJOR: 9
-  VTK_VERSION_MINOR: 3
-  VTK_VERSION_PATCH: 1
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
-            os: [ubuntu-22.04]
+            os: [ubuntu-20.04]
 
     steps:
     - uses: actions/checkout@v4
@@ -128,7 +125,7 @@ jobs:
           ${{github.workspace}}/install/lib/libmoordyn.so
           ${{github.workspace}}/install/lib/libmoordyn.so.2
           ${{github.workspace}}/install/lib/libmoordyn.so.2.3
-        if: runner.os == 'Linux'
+      if: runner.os == 'Linux'
 
     - name: Upload generated files - MacOS
       uses: actions/upload-artifact@v4
@@ -138,7 +135,7 @@ jobs:
           ${{github.workspace}}/install/lib/libmoordyn.dylib
           ${{github.workspace}}/install/lib/libmoordyn.2.dylib
           ${{github.workspace}}/install/lib/libmoordyn.2.3.dylib
-        if: runner.os == 'MacOS'
+      if: runner.os == 'MacOS'
 
     - name: Upload generated files - Windows
       uses: actions/upload-artifact@v4
@@ -146,4 +143,4 @@ jobs:
         name: generated-libraries
         path: |
           ${{github.workspace}}/install/lib/moordyn.dll
-        if: runner.os == 'Windows'
+      if: runner.os == 'Windows'
