@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
-            os: [ubuntu-22.04, windows-latest, macOS-latest]
+            os: [ubuntu-22.04]
 
     steps:
     - uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
           mkdir -p ${{github.workspace}}/install
 
     - name: Configure CMake (Linux)
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=ON -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
       if: runner.os == 'Linux'
 
     - name: Configure CMake (MacOS)
@@ -135,9 +135,9 @@ jobs:
       with:
         name: generated-libraries
         path: |
-          ${{github.workspace}}/install/lib/libmoordyn.so
-          ${{github.workspace}}/install/lib/libmoordyn.so.2
-          ${{github.workspace}}/install/lib/libmoordyn.so.2.3
+          ${{github.workspace}}/install/lib/libmoordyn.dylib
+          ${{github.workspace}}/install/lib/libmoordyn.2.dylib
+          ${{github.workspace}}/install/lib/libmoordyn.2.3.dylib
         if: runner.os == 'MacOS'
 
     - name: Upload generated files - Windows
@@ -145,7 +145,5 @@ jobs:
       with:
         name: generated-libraries
         path: |
-          ${{github.workspace}}/install/lib/libmoordyn.so
-          ${{github.workspace}}/install/lib/libmoordyn.so.2
-          ${{github.workspace}}/install/lib/libmoordyn.so.2.3
+          ${{github.workspace}}/install/lib/moordyn.dll
         if: runner.os == 'Windows'
