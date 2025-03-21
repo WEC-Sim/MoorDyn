@@ -31,7 +31,11 @@ jobs:
     - name: Install musl
       run: |
         sudo apt-get update
-        sudo apt-get install -y musl-tools g++-multilib
+        sudo apt-get install -y musl-tools g++-multilib python3 python3-pip
+
+    - name: Install PyPA build package
+      run: |
+        python3 -m pip install --upgrade build
 
     - name: Set up environment for musl
       run: echo "CC=musl-gcc" >> $GITHUB_ENV
