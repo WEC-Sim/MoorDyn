@@ -31,7 +31,7 @@ jobs:
     - name: Install musl
       run: |
         sudo apt-get update
-        sudo apt-get install -y musl-tools
+        sudo apt-get install -y musl-tools g++-multilib
 
     - name: Set up environment for musl
       run: echo "CC=musl-gcc" >> $GITHUB_ENV
@@ -51,7 +51,7 @@ jobs:
 
     - name: Configure CMake (Linux)
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install \
-                  -DPYTHON_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_C_COMPILER=musl-gcc -DCMAKE_CXX_COMPILER=musl-g++ 
+                  -DPYTHON_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_C_COMPILER=musl-gcc -DCMAKE_CXX_COMPILER=musl-gcc -DCMAKE_CXX_FLAGS="-lstdc++"  # Link against the C++ standard library
       if: runner.os == 'Linux'
 
     - name: Configure CMake (MacOS)
