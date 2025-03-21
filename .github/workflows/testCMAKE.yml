@@ -21,12 +21,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
-            os: [ubuntu-19.04]
+            os: [ubuntu-22.04]
 
     steps:
     - uses: actions/checkout@v4
       with:
        repository: 'FloatingArrayDesign/MoorDyn'
+
+    - name: Install musl
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y musl-tools
+
+    - name: Set up environment for musl
+      run: echo "CC=musl-gcc" >> $GITHUB_ENV
 
     - name: moordyn_version
       id: moordyn_version
@@ -36,13 +44,6 @@ jobs:
         minor=`cat CMakeLists.txt | grep MOORDYN_MINOR_VERSION | head -1 | awk -F' ' '{print $2}' | awk -F')' '{print $1}'`
         patch=`cat CMakeLists.txt | grep MOORDYN_PATCH_VERSION | head -1 | awk -F' ' '{print $2}' | awk -F')' '{print $1}'`
         echo "moordyn_version=$major.$minor.$patch" >> $GITHUB_OUTPUT
-
-    - name: Setup GCC Fortran (Linux)
-      uses: awvwgk/setup-fortran@main
-      id: setup-fortran
-      with:
-        compiler: gcc
-      if: runner.os == 'Linux'
 
     - name: Create install folder
       run: |
