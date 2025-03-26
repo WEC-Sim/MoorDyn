@@ -46,7 +46,7 @@ jobs:
         matrix:
             os: [ubuntu-22.04]
             architecture: [x86_64, i686]
-
+    steps:
     - name: Create install folder
       run: |
          mkdir -p ${{ github.workspace }}/install-${{ matrix.architecture }}
