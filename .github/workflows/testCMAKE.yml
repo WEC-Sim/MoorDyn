@@ -49,9 +49,7 @@ jobs:
           mkdir -p ${{github.workspace}}/install
 
     - name: Configure CMake (Linux)
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DEXTERNAL_EIGEN=ON
-      with:
-        arch: "x86_64"
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m64"
       if: runner.os == 'Linux'
 
     - name: Configure CMake (MacOS)
