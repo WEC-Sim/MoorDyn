@@ -86,7 +86,7 @@ jobs:
     - name: Install
       run: |
         BUILD_DIR="${{ github.workspace }}/build-${{ matrix.architecture }}"
-        cmake --install "$BUILD_DIR" --config ${{env.BUILD_TYPE}} --prefix "${{ github.workspace }}/install-${{ matrix.architecture }}
+        cmake --install "$BUILD_DIR" --config ${{env.BUILD_TYPE}} --prefix "${{ github.workspace }}/install-${{ matrix.architecture }}"
 
     - name: Set $PATH (Windows)
       run: Add-Content $env:GITHUB_PATH "${{github.workspace}}\install\bin"
