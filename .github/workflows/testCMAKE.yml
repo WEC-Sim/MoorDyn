@@ -17,8 +17,12 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  setup:
-    runs-on: ubuntu-22.04
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: [ubuntu-22.04]
+            architecture: [x86_64]
     steps:
     - uses: actions/checkout@v4
       with:
@@ -39,14 +43,6 @@ jobs:
         sudo apt-get install -y gfortran
       if: runner.os == 'Linux'
 
-  build:
-    runs-on: ${{ matrix.os }}
-    needs: setup
-    strategy:
-        matrix:
-            os: [ubuntu-22.04]
-            architecture: [x86_64]
-    steps:
     - name: Create install folder
       run: |
          mkdir -p ${{ github.workspace }}/install-${{ matrix.architecture }}
