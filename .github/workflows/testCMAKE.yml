@@ -39,10 +39,9 @@ jobs:
         echo "moordyn_version=$major.$minor.$patch" >> $GITHUB_OUTPUT
 
     - name: Setup GCC Fortran (Linux)
-      uses: awvwgk/setup-fortran@main
-      id: setup-fortran
-      with:
-        compiler: gcc
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gfortran
       if: runner.os == 'Linux'
 
     - name: Create install folder
@@ -50,18 +49,7 @@ jobs:
           mkdir -p ${{github.workspace}}/install
 
     - name: Configure CMake (Linux)
-      run: |
-        if [ "${{ matrix.architecture }}" == "x86_64" ]; then
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m64"
-        elif [ "${{ matrix.architecture }}" == "i686" ]; then
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m32"
-        elif [ "${{ matrix.architecture }}" == "aarch64" ]; then
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-mcpu=power8 -m64"
-        elif [ "${{ matrix.architecture }}" == "ppc64le" ]; then
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-march=armv8-a"
-        elif [ "${{ matrix.architecture }}" == "s390x" ]; then
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m64"
-        fi
+      run:  cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
       if: runner.os == 'Linux'
 
     - name: Configure CMake (MacOS)
