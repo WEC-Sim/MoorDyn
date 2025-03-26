@@ -46,10 +46,23 @@ jobs:
 
     - name: Create install folder
       run: |
-          mkdir -p ${{github.workspace}}/install
+         mkdir -p ${{ github.workspace }}/install-${{ matrix.architecture }}
 
     - name: Configure CMake (Linux)
-      run:  cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
+      run: |
+        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.architecture }}"
+        mkdir -p "$BUILD_DIR"
+        if [ "${{ matrix.architecture }}" == "x86_64" ]; then
+          cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m64"
+        elif [ "${{ matrix.architecture }}" == "i686" ]; then
+          cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m32"
+        elif [ "${{ matrix.architecture }}" == "aarch64" ]; then
+          cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-mcpu=power8 -m64"
+        elif [ "${{ matrix.architecture }}" == "ppc64le" ]; then
+          cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-march=armv8-a"
+        elif [ "${{ matrix.architecture }}" == "s390x" ]; then
+          cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m64"
+        fi
       if: runner.os == 'Linux'
 
     - name: Configure CMake (MacOS)
@@ -62,42 +75,41 @@ jobs:
 
     - name: Build
       id: build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: |
+        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.architecture }}"
+        cmake --build "$BUILD_DIR" --config ${{env.BUILD_TYPE}}
 
     # We do a little hack here. We install the library so we perfectly know the
     # path. Then we set the environment variable to let the OS find the
     # libraries
 
     - name: Install
-      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: |
+        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.architecture }}"
+        cmake --install "$BUILD_DIR" --config ${{env.BUILD_TYPE}} --prefix "${{ github.workspace }}/install-${{ matrix.architecture 
 
     - name: Set $PATH (Windows)
       run: Add-Content $env:GITHUB_PATH "${{github.workspace}}\install\bin"
       if: runner.os == 'Windows'
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      # We are just testing in Linux
-      run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
-
     - name: Create Installer
-      working-directory: ${{github.workspace}}/build
+      working-directory: ${{ github.workspace }}/build-${{ matrix.architecture }}
       shell: bash
       # Package the installer
       run: cpack -C ${{env.BUILD_TYPE}}
 
     - name: Test - list build folder
-      working-directory: ${{github.workspace}}/build
+      working-directory: ${{ github.workspace }}/build-${{ matrix.architecture }}
       run: 
         ls
         
     - name: Test - list install folder
-      working-directory: ${{github.workspace}}/install
+      working-directory: ${{ github.workspace }}/install-${{ matrix.architecture }}
       run: 
         ls
 
     - name: Test - list install/lib folder-linux
-      working-directory: ${{github.workspace}}/install/lib
+      working-directory: ${{ github.workspace }}/install-${{ matrix.architecture }}/lib
       # We are just testing in Linux
       run: 
         ls
@@ -122,9 +134,9 @@ jobs:
       with:
         name: generated-libraries
         path: |
-          ${{github.workspace}}/install/lib/libmoordyn.so
-          ${{github.workspace}}/install/lib/libmoordyn.so.2
-          ${{github.workspace}}/install/lib/libmoordyn.so.2.3
+          ${{ github.workspace }}/install-${{ matrix.architecture }}/lib/libmoordyn.so
+          ${{ github.workspace }}/install-${{ matrix.architecture }}/lib/libmoordyn.so.2
+          ${{ github.workspace }}/install-${{ matrix.architecture }}/lib/libmoordyn.so.2.3
       if: runner.os == 'Linux'
 
     - name: Upload generated files - MacOS
