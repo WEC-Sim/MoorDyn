@@ -22,7 +22,7 @@ jobs:
     strategy:
         matrix:
             os: [ubuntu-22.04]
-            architecture: [aarch64]
+            architecture: [i686]
     steps:
     - uses: actions/checkout@v4
       with:
@@ -54,7 +54,7 @@ jobs:
         if [ "${{ matrix.architecture }}" == "x86_64" ]; then
           cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m64"
         elif [ "${{ matrix.architecture }}" == "i686" ]; then
-          cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m32"
+          cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
         elif [ "${{ matrix.architecture }}" == "aarch64" ]; then
           cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-mcpu=power8 -m64"
         elif [ "${{ matrix.architecture }}" == "ppc64le" ]; then
