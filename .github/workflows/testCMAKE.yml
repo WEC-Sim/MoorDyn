@@ -22,7 +22,7 @@ jobs:
     strategy:
         matrix:
             os: [ubuntu-22.04]
-            architecture: [i686]
+            architecture: [aarch64]
     steps:
     - uses: actions/checkout@v4
       with:
