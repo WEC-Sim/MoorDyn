@@ -74,7 +74,7 @@ jobs:
     - name: Build
       id: build
       run: |
-        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.architecture }}"
+        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.os }}"
         cmake --build "$BUILD_DIR" --config ${{env.BUILD_TYPE}}
 
     # We do a little hack here. We install the library so we perfectly know the
@@ -83,31 +83,31 @@ jobs:
 
     - name: Install
       run: |
-        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.architecture }}"
-        cmake --install "$BUILD_DIR" --config ${{env.BUILD_TYPE}} --prefix "${{ github.workspace }}/install-${{ matrix.architecture }}"
+        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.os }}"
+        cmake --install "$BUILD_DIR" --config ${{env.BUILD_TYPE}} --prefix "${{ github.workspace }}/install-${{ matrix.os }}"
 
     - name: Set $PATH (Windows)
       run: Add-Content $env:GITHUB_PATH "${{github.workspace}}\install\bin"
       if: runner.os == 'Windows'
 
     - name: Create Installer
-      working-directory: ${{ github.workspace }}/build-${{ matrix.architecture }}
+      working-directory: ${{ github.workspace }}/build-${{ matrix.os }}
       shell: bash
       # Package the installer
       run: cpack -C ${{env.BUILD_TYPE}}
 
     - name: Test - list build folder
-      working-directory: ${{ github.workspace }}/build-${{ matrix.architecture }}
+      working-directory: ${{ github.workspace }}/build-${{ matrix.os }}
       run: 
         ls
         
     - name: Test - list install folder
-      working-directory: ${{ github.workspace }}/install-${{ matrix.architecture }}
+      working-directory: ${{ github.workspace }}/install-${{ matrix.os }}
       run: 
         ls
 
     - name: Test - list install/lib folder-linux
-      working-directory: ${{ github.workspace }}/install-${{ matrix.architecture }}/lib
+      working-directory: ${{ github.workspace }}/install-${{ matrix.os }}/lib
       # We are just testing in Linux
       run: 
         ls
@@ -132,9 +132,9 @@ jobs:
       with:
         name: generated-libraries
         path: |
-          ${{ github.workspace }}/install-${{ matrix.architecture }}/lib/libmoordyn.so
-          ${{ github.workspace }}/install-${{ matrix.architecture }}/lib/libmoordyn.so.2
-          ${{ github.workspace }}/install-${{ matrix.architecture }}/lib/libmoordyn.so.2.3
+          ${{ github.workspace }}/install-${{ matrix.os }}/lib/libmoordyn.so
+          ${{ github.workspace }}/install-${{ matrix.os }}/lib/libmoordyn.so.2
+          ${{ github.workspace }}/install-${{ matrix.os }}/lib/libmoordyn.so.2.3
       if: runner.os == 'Linux'
 
     - name: Upload generated files - MacOS
