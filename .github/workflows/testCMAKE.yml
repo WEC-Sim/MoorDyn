@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
-            os: [ubuntu-22.04]
+            os: [ubuntu-22.04, windows-latest, macos-latest]
             architecture: [s390x]
     steps:
     - uses: actions/checkout@v4
