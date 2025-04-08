@@ -48,8 +48,7 @@ jobs:
     - name: Build
       id: build
       run: |
-        BUILD_DIR="${{ github.workspace }}/build"
-        cmake --build "$BUILD_DIR" --config ${{env.BUILD_TYPE}}
+        cmake --build ${{ github.workspace }}/build --config ${{env.BUILD_TYPE}}
 
     # We do a little hack here. We install the library so we perfectly know the
     # path. Then we set the environment variable to let the OS find the
@@ -57,8 +56,7 @@ jobs:
 
     - name: Install
       run: |
-        BUILD_DIR="${{ github.workspace }}/build"
-        cmake --install "$BUILD_DIR" --config ${{env.BUILD_TYPE}} --prefix "${{ github.workspace }}/install"
+        cmake --install ${{ github.workspace }}/build --config ${{env.BUILD_TYPE}}
 
     - name: Set $PATH (Windows)
       run: Add-Content $env:GITHUB_PATH "${{github.workspace}}\install\bin"
