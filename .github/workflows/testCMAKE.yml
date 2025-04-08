@@ -8,7 +8,7 @@ on:
         required: false
         type: string
         default: '["ubuntu-22.04"]'
-  pull_request:      # Triggers the workflow on pull request events
+  #pull_request:      # Triggers the workflow on pull request events
 
 permissions: write-all
 
