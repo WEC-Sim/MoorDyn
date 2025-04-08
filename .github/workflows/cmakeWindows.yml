@@ -83,6 +83,10 @@ jobs:
       run: 
         ls
       if: runner.os == 'Windows'
+    
+    - name: Rename moordyn.dll to libmoordyn.dll
+      run: |
+        mv "${{ github.workspace }}/install/bin/moordyn.dll" "${{ github.workspace }}/install/bin/libmoordyn.dll"
 
     # Step 4: Upload the generated files
     - name: Upload generated files - Windows
@@ -90,5 +94,5 @@ jobs:
       with:
         name: generated-libraries
         path: |
-          ${{github.workspace}}/install/bin/moordyn.dll
+          ${{github.workspace}}/install/bin/libmoordyn.dll
       if: runner.os == 'Windows'
