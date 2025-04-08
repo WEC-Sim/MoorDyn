@@ -90,5 +90,5 @@ jobs:
       with:
         name: generated-libraries
         path: |
-          ${{github.workspace}}/install-${{ matrix.os }}/lib/moordyn.dll
+          ${{github.workspace}}/install/bin/moordyn.dll
       if: runner.os == 'Windows'
