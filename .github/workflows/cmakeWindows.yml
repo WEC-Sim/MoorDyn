@@ -42,7 +42,7 @@ jobs:
 
     - name: Configure CMake (Windows)
       run: |
-        BUILD_DIR="${{ github.workspace }}/build
+        BUILD_DIR="${{ github.workspace }}/build"
         mkdir -p "$BUILD_DIR"
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
       if: runner.os == 'Windows'
