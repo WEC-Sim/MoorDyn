@@ -44,11 +44,11 @@ jobs:
 
     - name: Create install folder
       run: |
-         mkdir -p ${{ github.workspace }}/install-${{ matrix.architecture }}
+         mkdir -p ${{ github.workspace }}/install-${{ matrix.os }}
 
     - name: Configure CMake (Linux)
       run: |
-        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.architecture }}"
+        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.os }}"
         mkdir -p "$BUILD_DIR"
         if [ "${{ matrix.architecture }}" == "x86_64" ]; then
           cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DPYTHON_WRAPPER=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-m64"
@@ -64,11 +64,17 @@ jobs:
       if: runner.os == 'Linux'
 
     - name: Configure CMake (MacOS)
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
+      run: |
+        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.os }}"
+        mkdir -p "$BUILD_DIR"
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
       if: runner.os == 'MacOS'
 
     - name: Configure CMake (Windows)
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
+      run: |
+        BUILD_DIR="${{ github.workspace }}/build-${{ matrix.os }}"
+        mkdir -p "$BUILD_DIR"
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
       if: runner.os == 'Windows'
 
     - name: Build
@@ -142,9 +148,9 @@ jobs:
       with:
         name: generated-libraries
         path: |
-          ${{github.workspace}}/install/lib/libmoordyn.dylib
-          ${{github.workspace}}/install/lib/libmoordyn.2.dylib
-          ${{github.workspace}}/install/lib/libmoordyn.2.3.dylib
+          ${{github.workspace}}/install-${{ matrix.os }}/lib/libmoordyn.dylib
+          ${{github.workspace}}/install-${{ matrix.os }}/lib/libmoordyn.2.dylib
+          ${{github.workspace}}/install-${{ matrix.os }}/lib/libmoordyn.2.3.dylib
       if: runner.os == 'MacOS'
 
     - name: Upload generated files - Windows
@@ -152,5 +158,5 @@ jobs:
       with:
         name: generated-libraries
         path: |
-          ${{github.workspace}}/install/lib/moordyn.dll
+          ${{github.workspace}}/install-${{ matrix.os }}/lib/moordyn.dll
       if: runner.os == 'Windows'
