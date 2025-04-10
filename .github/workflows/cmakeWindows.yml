@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
-            os: [windows-latest, macos-latest]
+            os: [windows-latest]
     steps:
     - uses: actions/checkout@v4
       with:
@@ -49,7 +49,8 @@ jobs:
     
     - name: Rename moordyn.dll to libmoordyn.dll
       run: |
-        mv "${{ github.workspace }}/install/bin/moordyn.dll" "${{ github.workspace }}/install/bin/libmoordyn.dll"
+        mv "${{ github.workspace }}/install/bin/moordyn.dll" "${{ github.workspace }}/generated_files/libmoordyn.dll"
+      if: runner.os == 'Windows'
 
     # Step 4: Upload the generated files
     - name: Upload generated files - Windows
@@ -69,3 +70,14 @@ jobs:
           ${{github.workspace}}/install-${{ matrix.os }}/lib/libmoordyn.2.dylib
           ${{github.workspace}}/install-${{ matrix.os }}/lib/libmoordyn.2.3.dylib
       if: runner.os == 'MacOS'
+
+      # Step 4: Add generated files to the repository
+    - name: Commit generated files
+      run: |
+        git config --local user.name "GitHub Actions"
+        git config --local user.email "actions@github.com"
+        git add ${{ github.workspace }}/generated_files/*  
+        git commit -m "Add generated library files" || true
+        git push origin HEAD:${{ github.ref }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the GitHub token for authentication
