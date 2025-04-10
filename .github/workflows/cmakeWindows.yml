@@ -60,8 +60,7 @@ jobs:
     - name: List generated files
       run: |
         echo "Contents of generated_files:"
-        ls
-        ls -la ${{ github.workspace }}/generated_files
+        ls ${{ github.workspace }}/generated_files
 
     # Step 4: Upload the generated files
     - name: Upload generated files - Windows
