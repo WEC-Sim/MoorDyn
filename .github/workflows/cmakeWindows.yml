@@ -49,6 +49,7 @@ jobs:
     
     - name: Rename moordyn.dll to libmoordyn.dll
       run: |
+        mkdir -p ${{ github.workspace }}/generated_files
         mv "${{ github.workspace }}/install/bin/moordyn.dll" "${{ github.workspace }}/generated_files/libmoordyn.dll"
       if: runner.os == 'Windows'
 
