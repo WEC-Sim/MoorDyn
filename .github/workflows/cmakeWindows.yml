@@ -86,7 +86,7 @@ jobs:
       run: |
         git config --local user.name "GitHub Actions"
         git config --local user.email "actions@github.com"
-        git add ${{ github.workspace }}/generated_files/libmoordyn.dll
+        git add -f ${{ github.workspace }}/generated_files/libmoordyn.dll
         git commit -m "Add generated library files" || true
         git push origin HEAD:${{ github.ref }}
       env:
