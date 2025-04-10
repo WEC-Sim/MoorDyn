@@ -57,13 +57,19 @@ jobs:
         mv "${{ github.workspace }}/install/bin/moordyn.dll" "${{ github.workspace }}/generated_files/libmoordyn.dll"
       if: runner.os == 'Windows'
 
+    - name: List generated files
+      run: |
+        echo "Contents of generated_files:"
+        ls
+        ls -la ${{ github.workspace }}/generated_files
+
     # Step 4: Upload the generated files
     - name: Upload generated files - Windows
       uses: actions/upload-artifact@v4
       with:
         name: generated-libraries
         path: |
-          ${{github.workspace}}/install/bin/libmoordyn.dll
+          ${{ github.workspace }}/generated_files/libmoordyn.dll
       if: runner.os == 'Windows'
 
     - name: Upload generated files - MacOS
