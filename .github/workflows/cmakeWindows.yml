@@ -27,6 +27,10 @@ jobs:
       with:
        repository: 'FloatingArrayDesign/MoorDyn'
 
+    - name: Set remote to fork
+      run: |
+        git remote set-url origin https://github.com/${{ github.repository }}.git
+
     - name: moordyn_version
       id: moordyn_version
       shell: bash
@@ -81,4 +85,4 @@ jobs:
         git commit -m "Add generated library files" || true
         git push origin HEAD:${{ github.ref }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the GitHub token for authentication
+        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}  # Use the GitHub token for authentication
