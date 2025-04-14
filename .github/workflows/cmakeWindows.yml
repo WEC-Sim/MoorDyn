@@ -63,13 +63,13 @@ jobs:
         ls ${{ github.workspace }}/generated_files
 
     # Step 4: Upload the generated files
-    - name: Upload generated files - Windows
-      uses: actions/upload-artifact@v4
-      with:
-        name: generated-libraries
-        path: |
-          ${{ github.workspace }}/generated_files/libmoordyn.dll
-      if: runner.os == 'Windows'
+    #- name: Upload generated files - Windows
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: generated-libraries
+    #    path: |
+    #      ${{ github.workspace }}/generated_files/libmoordyn.dll
+    #  if: runner.os == 'Windows'
 
     - name: Upload generated files - MacOS
       uses: actions/upload-artifact@v4
