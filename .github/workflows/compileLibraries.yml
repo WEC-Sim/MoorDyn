@@ -8,7 +8,6 @@ on:
         required: false
         type: string
         default: '["ubuntu-22.04"]'
-  pull_request:
 
 permissions: write-all
 
@@ -27,23 +26,23 @@ jobs:
     - name: Configure CMake (Windows), build, and install
       run: |
         mkdir -p ${{ github.workspace }}/install-${{ matrix.os }}
-        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
+        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-${{ matrix.os }} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
         cmake --build ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}}
         cmake --install ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}} 
 
     - name: Set $PATH (Windows)
-      run: Add-Content $env:GITHUB_PATH "${{github.workspace}}\install\bin"
+      run: Add-Content $env:GITHUB_PATH "${{github.workspace}}\install-${{ matrix.os }}\bin"
 
     - name: Rename moordyn.dll to libmoordyn.dll
       run: |
-        mv "${{ github.workspace }}/install/bin/moordyn.dll" "${{ github.workspace }}/install/bin/libmoordyn.dll"
+        mv "${{ github.workspace }}/install-${{ matrix.os }}/bin/moordyn.dll" "${{ github.workspace }}/install-${{ matrix.os }}/bin/libmoordyn.dll"
 
     - name: Upload generated files - Windows
       uses: actions/upload-artifact@v4
       with:
         name: generated-libraries-windows
         path: |
-          ${{ github.workspace }}/install/bin/*libmoordyn*
+          ${{ github.workspace }}/install-${{ matrix.os }}/bin/*libmoordyn*
 
   build-macos:
     runs-on: macos-latest
@@ -58,7 +57,7 @@ jobs:
     - name: Configure CMake (MacOS), build, and install
       run: |
         mkdir -p ${{ github.workspace }}/install-${{ matrix.os }}
-        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-${{ matrix.os }} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
+        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-${{ matrix.os }} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
         cmake --build ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}}
         cmake --install ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}} 
 
@@ -87,7 +86,7 @@ jobs:
     - name: Configure CMake (Linux), build, and install
       run: |
         mkdir -p ${{ github.workspace }}/install-${{ matrix.os }}
-        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-${{ matrix.os }} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DBUILD_TESTING=OFF
+        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-${{ matrix.os }} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
         cmake --build ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}}
         cmake --install ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}}
 
