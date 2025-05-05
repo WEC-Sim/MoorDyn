@@ -1,0 +1,99 @@
+name: CMake Libraries for windows, mac, and linux in various architectures
+
+on:
+  workflow_dispatch:
+    inputs:
+      os:
+        description: 'Host OS'
+        required: false
+        type: string
+        default: '["ubuntu-latest"]'
+
+permissions: write-all
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+       repository: 'FloatingArrayDesign/MoorDyn'
+
+    - name: Configure CMake (Windows), build, and install
+      run: |
+        mkdir -p ${{ github.workspace }}/install-${{ matrix.os }}
+        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-${{ matrix.os }} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
+        cmake --build ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}}
+        cmake --install ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}} 
+
+    - name: Set $PATH (Windows)
+      run: Add-Content $env:GITHUB_PATH "${{github.workspace}}\install-${{ matrix.os }}\bin"
+
+    - name: Rename moordyn.dll to libmoordyn.dll
+      run: |
+        mv "${{ github.workspace }}/install-${{ matrix.os }}/bin/moordyn.dll" "${{ github.workspace }}/install-${{ matrix.os }}/bin/libmoordyn.dll"
+
+    - name: Upload generated files - Windows
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-libraries-windows
+        path: |
+          ${{ github.workspace }}/install-${{ matrix.os }}/bin/*libmoordyn*
+
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+        matrix:
+            arch: ["x86_64", "arm64"]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+       repository: 'FloatingArrayDesign/MoorDyn'
+
+    - name: Configure CMake (MacOS), build, and install
+      run: |
+        mkdir -p ${{ github.workspace }}/install-${{ matrix.os }}
+        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-${{ matrix.os }} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
+        cmake --build ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}}
+        cmake --install ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}} 
+
+    - name: Upload generated files - MacOS
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-libraries-macos-${{matrix.arch}}
+        path: |
+          ${{github.workspace}}/install-${{ matrix.os }}/lib/*libmoordyn*
+
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+            arch: ["x86_64", "i686", "aarch64", "ppc64le", "s390x"]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+       repository: 'FloatingArrayDesign/MoorDyn'
+
+    - name: Setup GCC Fortran (Linux)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gfortran
+
+    - name: Configure CMake (Linux), build, and install
+      run: |
+        mkdir -p ${{ github.workspace }}/install-${{ matrix.os }}
+        cmake -B ${{github.workspace}}/build-${{ matrix.os }} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install-${{ matrix.os }} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DEXTERNAL_EIGEN:BOOL=OFF -DPYTHON_WRAPPER:BOOL=OFF -DFORTRAN_WRAPPER:BOOL=OFF -DMATLAB_WRAPPER:BOOL=OFF -DRUST_WRAPPER:BOOL=OFF -DUSE_VTK=OFF -DMOORDYN_PACKAGE_IGNORE_VTK_DEPENDENCY=ON -DBUILD_TESTING=OFF
+        cmake --build ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}}
+        cmake --install ${{ github.workspace }}/build-${{ matrix.os }} --config ${{env.BUILD_TYPE}}
+
+    # Step 4: Upload the generated files
+    - name: Upload generated files - Linux
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-libraries-linux-${{matrix.arch}}
+        path: |
+          ${{ github.workspace }}/install-${{ matrix.os }}/lib/*libmoordyn*
