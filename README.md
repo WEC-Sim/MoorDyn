@@ -27,9 +27,8 @@ If the MoorDyn files on this repository are not functioning on your system,
 you should compile the code from source following the steps in the 
 [documentation](https://moordyn.readthedocs.io/en/latest/). MoorDyn will 
 automatically build with the right architecture for your system. Once you have 
-your local MoorDyn library and source code, replace `MoorDyn.h`, 
-`MoorDynAPI.h`, and the library file(s) (e.g., `libmoordyn.dll`) from this repo 
-with your local copy.
+your local MoorDyn library and source code, replace the library file(s) 
+(e.g., `libmoordyn.dll`) from this repo with your local copy.
 
 --------------------- MoorDyn v2.4.0 -------------------------
 
@@ -68,7 +67,7 @@ data,î Ocean Engineering, vol. 104, pp. 590ñ603, Aug. 2015.
 
 **Mac architecture issue:**
 
-If WECSim on Mac gives architecture errors when running MoorDyn similar to:
+If WEC-Sim on Mac gives architecture errors when running MoorDyn similar to:
 
     Error using wecSim (line 46)
     There was an error loading the library "WEC-Sim/source/functions/moorDyn/libmoordyn.dylib"
@@ -80,6 +79,6 @@ If WECSim on Mac gives architecture errors when running MoorDyn similar to:
 
 then you have a mismatch between the MoorDyn compiled architecture and your system architecture. To resolve this, double check you copied and renamed the `.dylib` corrsponding to your system into the `WEC-Sim/source/functions/moorDyn` folder.
 
-If that doesnt work, you should compile the code from source following the steps in the [documentation](https://moordyn.readthedocs.io/en/latest/). MoorDyn will automatically build with the right architecture for your system. Once you have your local MoorDyn library and source code, replace `MoorDyn.h`, `MoorDynAPI.h`, and `libmoordyn.dylib` from this repo with your local copy. The `.h` files can be found in `MoorDyn/source/`, and the library files can be found in `MoorDyn/build/source/`. 
+If that doesnt work, you should compile the code from source following the steps in the [documentation](https://moordyn.readthedocs.io/en/latest/). MoorDyn will automatically build with the right architecture for your system. Once you have your local MoorDyn library and source code, replace `MoorDyn2.h` (and other linked .h files), `MoorDynAPI.h`, and `libmoordyn.dylib` from this repo with your local copy. The `.h` files can be found in `MoorDyn/source/`, and the library files can be found in `MoorDyn/build/source/`. 
 
 Note: to force MoorDyn to compile for a different architecture, add the `-DCMAKE_OSX_ARCHITECTURES=<insert architecture>` to your cmake call. 
